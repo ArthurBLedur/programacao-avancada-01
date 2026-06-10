@@ -127,3 +127,28 @@ class PedidoProdutoDigital extends Pedido implements IPedidoPagavel, IPedidoFatu
 // 7. Exemplo de composição das dependências
 const bancoDeDados = new BancoDeDadosMySQL();
 const pedidoRepository = new PedidoRepository(bancoDeDados);
+
+/*
+Justificativa das mudanças arquiteturais:
+
+1. SRP: a classe Pedido ficou responsável apenas pelos dados do pedido.
+   Cálculos, persistência e envio de e-mail foram extraídos para
+   CalculadoraPedido, PedidoRepository e EmailPedidoService.
+
+2. OCP: os descontos passaram a usar a interface IPoliticaDesconto.
+   Novos tipos de cliente, como PREMIUM, podem ser adicionados criando uma
+   nova classe de desconto, sem alterar CalculadoraPedido.
+
+3. LSP: PedidoProdutoDigital não implementa mais comportamentos que não
+   consegue cumprir, como frete ou etiqueta física. Assim ele pode substituir
+   Pedido nas operações comuns sem lançar exceções inesperadas.
+
+4. ISP: a interface genérica de tarefas foi separada em interfaces menores:
+   IPedidoPagavel, IPedidoFaturavel, IPedidoComFrete e
+   IPedidoComEtiquetaFisica. Cada classe implementa apenas as capacidades que
+   realmente possui.
+
+5. DIP: PedidoRepository depende da abstração IBancoDeDados, recebida por
+   injeção no construtor, em vez de instanciar diretamente BancoDeDadosMySQL.
+   Isso facilita trocar o banco e criar testes com implementações falsas.
+*/
