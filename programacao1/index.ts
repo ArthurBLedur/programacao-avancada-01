@@ -39,7 +39,7 @@ class CalculadoraPedido {
         return pedido.politicaDesconto.calcular(pedido.valorTotal);
     }
 
-    calcularFrete(pedido: IPedidoComEntrega): number {
+    calcularFrete(pedido: IPedidoComFrete): number {
         return pedido.calcularFrete();
     }
 }
@@ -62,14 +62,20 @@ class EmailPedidoService {
     }
 }
 
-// 3. Interfaces de tarefas do pedido
-interface ITarefasPedido {
+// 3. Interfaces segregadas por responsabilidade
+interface IPedidoPagavel {
     processarPagamento(): void;
+}
+
+interface IPedidoFaturavel {
     gerarNotaFiscal(): void;
 }
 
-interface IPedidoComEntrega {
+interface IPedidoComFrete {
     calcularFrete(): number;
+}
+
+interface IPedidoComEtiquetaFisica {
     imprimirEtiquetaFisica(): void;
 }
 
@@ -85,7 +91,7 @@ class Pedido {
 }
 
 // 5. Implementação para produtos físicos
-class PedidoProdutoFisico extends Pedido implements ITarefasPedido, IPedidoComEntrega {
+class PedidoProdutoFisico extends Pedido implements IPedidoPagavel, IPedidoFaturavel, IPedidoComFrete, IPedidoComEtiquetaFisica {
     processarPagamento(): void {
         console.log("Pagamento processado.");
     }
@@ -104,7 +110,7 @@ class PedidoProdutoFisico extends Pedido implements ITarefasPedido, IPedidoComEn
 }
 
 // 6. Implementação para produtos digitais
-class PedidoProdutoDigital extends Pedido implements ITarefasPedido {
+class PedidoProdutoDigital extends Pedido implements IPedidoPagavel, IPedidoFaturavel {
     processarPagamento(): void {
         console.log("Pagamento processado online.");
     }
