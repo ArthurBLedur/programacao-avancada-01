@@ -152,3 +152,28 @@ Justificativa das mudanças arquiteturais:
    injeção no construtor, em vez de instanciar diretamente BancoDeDadosMySQL.
    Isso facilita trocar o banco e criar testes com implementações falsas.
 */
+
+// 8. Exemplos de uso para executar o código
+const calculadoraPedido = new CalculadoraPedido();
+const emailPedidoService = new EmailPedidoService();
+
+const pedidoFisicoVip = new PedidoProdutoFisico(200, new DescontoClienteVip());
+const pedidoDigitalPremium = new PedidoProdutoDigital(100, new DescontoClientePremium());
+
+console.log("Pedido físico VIP");
+console.log("Desconto:", calculadoraPedido.calcularDesconto(pedidoFisicoVip));
+console.log("Frete:", calculadoraPedido.calcularFrete(pedidoFisicoVip));
+pedidoFisicoVip.processarPagamento();
+pedidoFisicoVip.gerarNotaFiscal();
+pedidoFisicoVip.imprimirEtiquetaFisica();
+pedidoRepository.salvar(pedidoFisicoVip);
+emailPedidoService.enviarConfirmacao();
+
+console.log("--------------------");
+
+console.log("Pedido digital PREMIUM");
+console.log("Desconto:", calculadoraPedido.calcularDesconto(pedidoDigitalPremium));
+pedidoDigitalPremium.processarPagamento();
+pedidoDigitalPremium.gerarNotaFiscal();
+pedidoRepository.salvar(pedidoDigitalPremium);
+emailPedidoService.enviarConfirmacao();
