@@ -1,5 +1,9 @@
-// 1. Classe de Banco de Dados Concreta
-class BancoDeDadosMySQL {
+// 1. Abstração e implementação de Banco de Dados
+interface IBancoDeDados {
+    salvar(dados: any): void;
+}
+
+class BancoDeDadosMySQL implements IBancoDeDados {
     salvar(dados: any): void {
         console.log("Salvando dados no MySQL...");
     }
@@ -45,9 +49,9 @@ class CalculadoraPedido {
 }
 
 class PedidoRepository {
-    private db: BancoDeDadosMySQL;
+    private db: IBancoDeDados;
 
-    constructor(db: BancoDeDadosMySQL = new BancoDeDadosMySQL()) {
+    constructor(db: IBancoDeDados) {
         this.db = db;
     }
 
@@ -119,3 +123,7 @@ class PedidoProdutoDigital extends Pedido implements IPedidoPagavel, IPedidoFatu
         console.log("Nota fiscal digital gerada.");
     }
 }
+
+// 7. Exemplo de composição das dependências
+const bancoDeDados = new BancoDeDadosMySQL();
+const pedidoRepository = new PedidoRepository(bancoDeDados);
