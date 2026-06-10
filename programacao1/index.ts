@@ -6,14 +6,37 @@ class BancoDeDadosMySQL {
 }
 
 // 2. Servicos com responsabilidades especificas
+interface IPoliticaDesconto {
+    calcular(valorTotal: number): number;
+}
+
+class DescontoClienteComum implements IPoliticaDesconto {
+    calcular(_valorTotal: number): number {
+        return 0;
+    }
+}
+
+class DescontoClienteVip implements IPoliticaDesconto {
+    calcular(valorTotal: number): number {
+        return valorTotal * 0.20;
+    }
+}
+
+class DescontoClienteEstudante implements IPoliticaDesconto {
+    calcular(valorTotal: number): number {
+        return valorTotal * 0.10;
+    }
+}
+
+class DescontoClientePremium implements IPoliticaDesconto {
+    calcular(valorTotal: number): number {
+        return valorTotal * 0.15;
+    }
+}
+
 class CalculadoraPedido {
     calcularDesconto(pedido: Pedido): number {
-        if (pedido.tipoCliente === "VIP") {
-            return pedido.valorTotal * 0.20;
-        } else if (pedido.tipoCliente === "ESTUDANTE") {
-            return pedido.valorTotal * 0.10;
-        }
-        return 0;
+        return pedido.politicaDesconto.calcular(pedido.valorTotal);
     }
 
     calcularFrete(): number {
@@ -49,11 +72,11 @@ interface ITarefasPedido {
 // 4. Classe principal de Pedido
 class Pedido {
     public valorTotal: number;
-    public tipoCliente: string;
+    public politicaDesconto: IPoliticaDesconto;
 
-    constructor(valorTotal: number, tipoCliente: string) {
+    constructor(valorTotal: number, politicaDesconto: IPoliticaDesconto = new DescontoClienteComum()) {
         this.valorTotal = valorTotal;
-        this.tipoCliente = tipoCliente;
+        this.politicaDesconto = politicaDesconto;
     }
 }
 
